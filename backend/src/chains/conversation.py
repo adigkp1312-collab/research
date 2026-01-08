@@ -11,7 +11,7 @@ from langchain.chains import ConversationChain
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.callbacks import AsyncIteratorCallbackHandler
 
-from ..langchain_client import create_chat_model, MODELS
+from ..langchain_client import create_chat_model
 from ..memory import get_session_memory
 
 
@@ -37,7 +37,6 @@ Keep responses concise and focused. When appropriate, structure your output for 
 
 def create_director_chain(
     session_id: str,
-    model_id: str = MODELS["GEMINI_FLASH"],
     system_prompt: str = DIRECTOR_SYSTEM_PROMPT,
     window_size: int = 10,
     callbacks: Optional[List] = None,
@@ -78,14 +77,13 @@ def create_director_chain(
         llm=model,
         prompt=prompt,
         memory=memory,
-        verbose=True,  # Enable for debugging
+        verbose=False,  # Set to False in Lambda to reduce logs
     )
 
 
 async def quick_chat(
     session_id: str,
     message: str,
-    model_id: str = MODELS["GEMINI_FLASH"],
 ) -> str:
     """
     Simple wrapper for quick chat without streaming.
@@ -93,12 +91,11 @@ async def quick_chat(
     Args:
         session_id: Session identifier
         message: User message
-        model_id: Optional model override
     
     Returns:
         AI response text
     """
-    chain = create_director_chain(session_id, model_id)
+    chain = create_director_chain(session_id)
     result = await chain.ainvoke({"input": message})
     return result["response"]
 
@@ -106,7 +103,6 @@ async def quick_chat(
 async def stream_chat(
     session_id: str,
     message: str,
-    model_id: str = MODELS["GEMINI_FLASH"],
 ) -> AsyncGenerator[str, None]:
     """
     Streaming chat that yields tokens as they arrive.
@@ -123,7 +119,6 @@ async def stream_chat(
     
     chain = create_director_chain(
         session_id=session_id,
-        model_id=model_id,
         callbacks=[callback],
     )
     

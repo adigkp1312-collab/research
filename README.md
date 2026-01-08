@@ -1,15 +1,15 @@
 # LangChain Chat POC
 
-A minimal proof-of-concept demonstrating LangChain + OpenRouter + Pinecone + LangSmith integration for the Adiyogi Arts platform.
+A minimal proof-of-concept demonstrating LangChain + Gemini 3 Flash with secure Lambda environment variable configuration.
 
 ## Purpose
 
 This isolated repository validates the LangChain architecture before migrating the main Adiyogi Arts codebase. It demonstrates:
 
-- **OpenRouter** integration for multi-model API access (Gemini, Claude, GPT-4)
+- **Direct Gemini 3 Flash** integration (no OpenRouter needed)
+- **Secure key management** via Lambda environment variables
 - **LangChain** conversation chains with memory
-- **LangSmith** for observability and debugging
-- **Pinecone** vector store (prepared for RAG)
+- **LangSmith** for observability (optional)
 - **Streaming** responses for real-time chat
 
 ## Project Structure
@@ -40,20 +40,25 @@ langchain-poc/
 
 - Node.js 18+
 - Python 3.11+
-- API Keys:
-  - [OpenRouter](https://openrouter.ai/keys)
-  - [LangSmith](https://smith.langchain.com)
-  - [Pinecone](https://www.pinecone.io) (optional for POC)
+- Gemini API Key:
+  - Get from: [Google AI Studio](https://aistudio.google.com/app/apikey)
+  - Set via Lambda environment variables (see Setup section)
 
 ## Quick Start
 
-### 1. Clone and Setup
+### 1. Setup Environment Variables
 
+**For Local Development:**
 ```bash
-cd langchain-poc
-cp .env.example .env
-# Edit .env with your API keys
+# Set environment variable (like Lambda does)
+export GEMINI_API_KEY=your_key_here
+
+# Or create .env file (gitignored)
+echo "GEMINI_API_KEY=your_key_here" > .env
 ```
+
+**For Lambda Deployment:**
+Set `GEMINI_API_KEY` in Lambda environment variables (not in code).
 
 ### 2. Start Backend
 
@@ -82,20 +87,14 @@ npm run dev
 
 ## Features
 
-### Multi-Model Support via OpenRouter
+### Gemini 3 Flash Only
 
-Switch between models by changing the model ID:
+This POC uses Gemini 3 Flash exclusively, configured via Lambda environment variables:
 
-```typescript
-// Gemini Flash (fast, cheap)
-createChatModel("google/gemini-flash-1.5");
-
-// Claude Sonnet (creative)
-createChatModel("anthropic/claude-3-sonnet-20240229");
-
-// GPT-4 Turbo (structured output)
-createChatModel("openai/gpt-4-turbo");
-```
+- **Model**: `gemini-2.0-flash-exp` (Gemini 3 Flash Experimental)
+- **API**: Direct Google Gemini API (not OpenRouter)
+- **Key Management**: Secure Lambda environment variables
+- **No hardcoded keys**: Keys never in source code
 
 ### Conversation Memory
 
@@ -127,18 +126,38 @@ All LLM calls are automatically traced:
 
 ## Validation Checklist
 
-- [ ] OpenRouter connection works
-- [ ] Model switching (Gemini ↔ Claude) works
+- [ ] Gemini API key configured in Lambda environment
+- [ ] Backend can read GEMINI_API_KEY from environment
 - [ ] Conversation memory persists across turns
 - [ ] Streaming responses work
-- [ ] LangSmith traces are visible
 - [ ] Error handling works gracefully
+- [ ] LangSmith traces visible (if configured)
+
+## Lambda Deployment
+
+### Setting Environment Variables in Lambda
+
+**Via AWS Console:**
+1. Go to Lambda → Your Function → Configuration → Environment variables
+2. Add: `GEMINI_API_KEY` = `your_key_here`
+3. Save
+
+**Via AWS CLI:**
+```bash
+aws lambda update-function-configuration \
+  --function-name your-function-name \
+  --environment Variables="{GEMINI_API_KEY=your_key_here}" \
+  --region us-east-1
+```
+
+**Security Best Practice:**
+For production, use AWS Secrets Manager instead of plain environment variables.
 
 ## Next Steps
 
 After validating this POC:
 
 1. Migrate conversation chain to main codebase
-2. Add RAG with Pinecone for rules retrieval
+2. Add RAG for rules retrieval
 3. Replace custom intelligence services
 4. Add structured output parsing

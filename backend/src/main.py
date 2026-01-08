@@ -14,7 +14,7 @@ from pydantic import BaseModel
 from .config import settings
 from .chains import stream_chat, quick_chat
 from .memory import clear_session_memory, get_active_session_count
-from .langchain_client import MODELS
+from .langchain_client import GEMINI_MODEL
 
 
 # Configure LangSmith tracing on startup
@@ -66,23 +66,22 @@ class ChatRequest(BaseModel):
     """Chat request payload."""
     message: str
     session_id: str
-    model_id: str = MODELS["GEMINI_FLASH"]
 
 
 class ChatResponse(BaseModel):
     """Non-streaming chat response."""
     response: str
     session_id: str
-    model_id: str
 
 
 class HealthResponse(BaseModel):
     """Health check response."""
     status: str
     app_name: str
-    openrouter_configured: bool
+    gemini_configured: bool
     langsmith_enabled: bool
     active_sessions: int
+    model: str
 
 
 # Routes
@@ -92,9 +91,10 @@ async def root():
     return HealthResponse(
         status="ok",
         app_name=settings.app_name,
-        openrouter_configured=bool(settings.openrouter_api_key),
+        gemini_configured=bool(settings.gemini_api_key),
         langsmith_enabled=settings.langchain_tracing_v2 and bool(settings.langchain_api_key),
         active_sessions=get_active_session_count(),
+        model=GEMINI_MODEL,
     )
 
 
@@ -111,20 +111,21 @@ async def chat(request: ChatRequest):
     
     Returns the complete response after generation is finished.
     """
-    if not settings.openrouter_api_key:
-        raise HTTPException(status_code=500, detail="OpenRouter API key not configured")
+    if not settings.gemini_api_key:
+        raise HTTPException(
+            status_code=500,
+            detail="GEMINI_API_KEY not configured. Set it in Lambda environment variables."
+        )
     
     try:
         response = await quick_chat(
             session_id=request.session_id,
             message=request.message,
-            model_id=request.model_id,
         )
         
         return ChatResponse(
             response=response,
             session_id=request.session_id,
-            model_id=request.model_id,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -137,17 +138,21 @@ async def chat_stream(request: ChatRequest):
     
     Returns tokens as they are generated for real-time display.
     """
-    if not settings.openrouter_api_key:
-        raise HTTPException(status_code=500, detail="OpenRouter API key not configured")
+    if not settings.gemini_api_key:
+        raise HTTPException(
+            status_code=500,
+            detail="GEMINI_API_KEY not configured. Set it in Lambda environment variables."
+        )
     
     async def generate():
         try:
             async for token in stream_chat(
                 session_id=request.session_id,
                 message=request.message,
-                model_id=request.model_id,
             ):
                 yield token
+        except ValueError as e:
+            yield f"\n\n[Configuration Error: {str(e)}]"
         except Exception as e:
             yield f"\n\n[Error: {str(e)}]"
     
@@ -170,10 +175,12 @@ async def clear_session(session_id: str):
 
 @app.get("/models")
 async def list_models():
-    """List available models."""
+    """Get current model information."""
     return {
-        "models": MODELS,
-        "default": MODELS["GEMINI_FLASH"],
+        "model": GEMINI_MODEL,
+        "model_name": "Gemini 3 Flash (Experimental)",
+        "provider": "Google",
+        "api_type": "Direct (via GEMINI_API_KEY)",
     }
 
 

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MODELS, type ModelId } from './langchain';
+// Model selection removed - using Gemini 3 Flash only
 
 interface Message {
   id: string;
@@ -14,7 +14,7 @@ function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedModel, setSelectedModel] = useState<ModelId>(MODELS.GEMINI_FLASH);
+  // Removed model selector - using Gemini 3 Flash only
   const [sessionId] = useState(() => `session-${Date.now()}`);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -55,7 +55,6 @@ function App() {
         body: JSON.stringify({
           message: userMessage.content,
           session_id: sessionId,
-          model_id: selectedModel,
         }),
       });
 
@@ -101,26 +100,8 @@ function App() {
       {/* Header */}
       <header style={styles.header}>
         <h1 style={styles.title}>LangChain Chat POC</h1>
-        <div style={styles.modelSelector}>
-          <label style={styles.label}>Model:</label>
-          <select 
-            value={selectedModel}
-            onChange={(e) => setSelectedModel(e.target.value as ModelId)}
-            style={styles.select}
-          >
-            <optgroup label="Google Gemini">
-              <option value={MODELS.GEMINI_FLASH}>Gemini Flash (Fast)</option>
-              <option value={MODELS.GEMINI_PRO}>Gemini Pro (Reasoning)</option>
-            </optgroup>
-            <optgroup label="Anthropic Claude">
-              <option value={MODELS.CLAUDE_SONNET}>Claude Sonnet (Creative)</option>
-              <option value={MODELS.CLAUDE_OPUS}>Claude Opus (Best)</option>
-            </optgroup>
-            <optgroup label="OpenAI">
-              <option value={MODELS.GPT4_TURBO}>GPT-4 Turbo</option>
-              <option value={MODELS.GPT4O}>GPT-4o</option>
-            </optgroup>
-          </select>
+        <div style={styles.modelInfo}>
+          <span style={styles.modelBadge}>Gemini 3 Flash</span>
         </div>
       </header>
 
@@ -180,7 +161,7 @@ function App() {
       <footer style={styles.footer}>
         <span>Session: {sessionId}</span>
         <span>•</span>
-        <span>Model: {selectedModel}</span>
+        <span>Model: Gemini 3 Flash (via Lambda env vars)</span>
         <span>•</span>
         <a 
           href="https://smith.langchain.com" 
@@ -218,23 +199,19 @@ const styles: Record<string, React.CSSProperties> = {
     WebkitBackgroundClip: 'text',
     WebkitTextFillColor: 'transparent',
   },
-  modelSelector: {
+  modelInfo: {
     display: 'flex',
     alignItems: 'center',
     gap: '10px',
   },
-  label: {
+  modelBadge: {
+    padding: '8px 16px',
     fontSize: '14px',
-    color: '#888',
-  },
-  select: {
-    padding: '8px 12px',
-    fontSize: '14px',
-    backgroundColor: '#1a1a1a',
-    color: '#e0e0e0',
+    backgroundColor: '#1a3a5c',
+    color: '#4fc3f7',
     border: '1px solid #333',
     borderRadius: '6px',
-    cursor: 'pointer',
+    fontWeight: '600',
   },
   messages: {
     flex: 1,

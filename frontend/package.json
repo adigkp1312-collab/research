@@ -10,11 +10,6 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
-    "@langchain/core": "^0.3.0",
-    "@langchain/openai": "^0.3.0",
-    "@langchain/pinecone": "^0.1.0",
-    "langchain": "^0.3.0",
-    "langsmith": "^0.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

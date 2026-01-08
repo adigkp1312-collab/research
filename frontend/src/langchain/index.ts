@@ -1,30 +1,12 @@
 /**
  * LangChain Module Entry Point
  * 
- * Re-exports all LangChain utilities for easy importing.
+ * Frontend utilities for LangChain POC.
+ * Actual LLM calls are handled by backend API.
  */
 
-// Client and models
+// Model info
 export { 
-  createChatModel, 
-  getFastModel, 
-  getReasoningModel, 
-  getCreativeModel,
-  MODELS,
-  type ModelId 
+  CURRENT_MODEL,
+  MODEL_NAME
 } from "./client";
-
-// Memory management
-export { 
-  getSessionMemory, 
-  clearSessionMemory, 
-  clearAllMemories,
-  getActiveSessionCount 
-} from "./memory/buffer";
-
-// Chains
-export { 
-  createDirectorChain, 
-  quickChat, 
-  streamChat 
-} from "./chains/conversation";
