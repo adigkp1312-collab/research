@@ -1,0 +1,6 @@
+# Vertex AI
+google-cloud-aiplatform>=1.38.0
+vertexai>=1.38.0
+
+# HTTP client for Supabase REST API
+httpx>=0.25.0

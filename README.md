@@ -11,12 +11,14 @@ Adiyogilanchain/
 │   ├── langchain-client/   # [AI/ML] Gemini model factory
 │   ├── langchain-memory/   # [AI/ML] Session memory
 │   ├── langchain-chains/   # [AI/ML] Conversation chains
+│   ├── research_agent/     # [AI/ML] Internet research with Vertex AI
 │   ├── api/                # [Backend] FastAPI endpoints
 │   ├── ui/                 # [Frontend] React components
 │   └── testing/            # [QA] E2E & integration tests
 ├── apps/                   # Deployable applications
-│   ├── server/             # Backend entry point
-│   └── web/                # Frontend entry point
+│   ├── server/             # Backend entry point (Lambda)
+│   ├── web/                # Frontend entry point
+│   └── research-service/   # Research API (Cloud Run)
 ├── docs/                   # Documentation
 └── scripts/                # Development scripts
 ```
@@ -87,10 +89,39 @@ Access:
 |---------|------|---------|
 | `packages/core` | Platform | - |
 | `packages/langchain-*` | AI/ML | - |
+| `packages/research_agent` | AI/ML | - |
 | `packages/api` | Backend | - |
 | `packages/ui` | Frontend | - |
 | `packages/testing` | QA | - |
 | `apps/*` | DevOps | - |
+
+## Research Service (Cloud Run)
+
+Internet research agent using Vertex AI + Google Search grounding.
+
+**Deployed:** `https://research-service-1083011801594.asia-southeast1.run.app`
+
+### Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/research` | Create research from URL or text |
+| GET | `/research/{project_id}` | List all research for project |
+| GET | `/research/item/{id}` | Get single research item |
+| PATCH | `/research/{id}` | Update research |
+| DELETE | `/research/{id}` | Delete research |
+
+### Deploy
+
+```bash
+cd apps/research-service
+gcloud run deploy research-service \
+  --source . \
+  --region asia-southeast1 \
+  --set-env-vars GOOGLE_CLOUD_PROJECT=your-project,SUPABASE_URL=xxx,SUPABASE_SERVICE_KEY=xxx
+```
+
+See [Research Agent README](packages/research_agent/README.md) for package details.
 
 ## Testing
 
@@ -112,6 +143,8 @@ cd packages/testing && npm run test:e2e
 - [Architecture Overview](docs/architecture/OVERVIEW.md)
 - [LLM Flow](docs/architecture/LLM_FLOW.md)
 - [API Key Security](docs/security/API_KEYS.md)
+- [Research Agent](packages/research_agent/README.md) - Internet research
+- [Research Service API](docs/api/RESEARCH_SERVICE.md) - Cloud Run API docs
 - [ADRs](docs/adr/README.md) - Architecture decisions
 
 ## License
