@@ -4,7 +4,9 @@ LangChain Client Configuration
 Configures LangChain to use OpenRouter for multi-model access.
 """
 
+from __future__ import annotations
 import os
+from typing import Optional, List
 from langchain_openai import ChatOpenAI
 from .config import settings
 
@@ -32,8 +34,8 @@ def create_chat_model(
     model_id: str = MODELS["GEMINI_FLASH"],
     temperature: float = 0.7,
     streaming: bool = True,
-    max_tokens: int | None = None,
-    callbacks: list | None = None,
+    max_tokens: Optional[int] = None,
+    callbacks: Optional[List] = None,
 ) -> ChatOpenAI:
     """
     Creates a LangChain ChatModel configured to use OpenRouter.

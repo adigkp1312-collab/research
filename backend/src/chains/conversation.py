@@ -4,8 +4,9 @@ Conversation Chain Implementation
 Creates a conversation chain with memory for the Director AI chat.
 """
 
+from __future__ import annotations
 import asyncio
-from typing import AsyncGenerator, Callable
+from typing import AsyncGenerator, Callable, Optional, List
 from langchain.chains import ConversationChain
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.callbacks import AsyncIteratorCallbackHandler
@@ -39,7 +40,7 @@ def create_director_chain(
     model_id: str = MODELS["GEMINI_FLASH"],
     system_prompt: str = DIRECTOR_SYSTEM_PROMPT,
     window_size: int = 10,
-    callbacks: list | None = None,
+    callbacks: Optional[List] = None,
 ) -> ConversationChain:
     """
     Creates a Director conversation chain with memory.

@@ -4,8 +4,10 @@ Configuration Management
 Loads environment variables and provides typed configuration.
 """
 
+from __future__ import annotations
 import os
 from functools import lru_cache
+from typing import List
 try:
     from pydantic_settings import BaseSettings
 except ImportError:
@@ -31,7 +33,7 @@ class Settings(BaseSettings):
     # Application Configuration
     app_name: str = "LangChain POC"
     debug: bool = True
-    cors_origins: list[str] = ["http://localhost:5173", "http://localhost:3000"]
+    cors_origins: List[str] = ["http://localhost:5173", "http://localhost:3000"]
     
     class Config:
         env_file = ".env"
