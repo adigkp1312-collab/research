@@ -30,10 +30,11 @@ async def lifespan(app: FastAPI):
     else:
         print("⚠️ LangSmith tracing disabled (missing API key)")
     
-    if settings.openrouter_api_key:
-        print("✅ OpenRouter API key configured")
+    if settings.gemini_api_key:
+        print("✅ Gemini API key configured")
     else:
-        print("⚠️ OpenRouter API key not set - API calls will fail")
+        print("⚠️ GEMINI_API_KEY not set - API calls will fail")
+        print("   Set it via Lambda environment variables")
     
     print(f"🚀 {settings.app_name} started")
     
