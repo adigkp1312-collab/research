@@ -1,0 +1,5 @@
+# Core Package Dependencies
+# Team: Platform
+
+# No external dependencies - pure Python
+# This package only uses stdlib

@@ -46,7 +46,6 @@ def create_director_chain(
     
     Args:
         session_id: Unique session identifier
-        model_id: OpenRouter model ID
         system_prompt: Custom system prompt
         window_size: Number of messages to keep in memory
         callbacks: LangChain callbacks for streaming
@@ -54,9 +53,8 @@ def create_director_chain(
     Returns:
         ConversationChain with memory
     """
-    # Create the chat model
+    # Create the chat model (Gemini 3 Flash only)
     model = create_chat_model(
-        model_id=model_id,
         temperature=0.7,
         streaming=True,
         callbacks=callbacks,

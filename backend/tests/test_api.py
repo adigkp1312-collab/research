@@ -26,9 +26,10 @@ def test_list_models(client: TestClient):
     response = client.get("/models")
     assert response.status_code == 200
     data = response.json()
-    assert "models" in data
-    assert "default" in data
-    assert "GEMINI_FLASH" in data["models"]
+    assert "model" in data
+    assert data["model"] == "gemini-2.0-flash-exp"
+    assert "model_name" in data
+    assert "provider" in data
 
 
 def test_clear_session(client: TestClient, session_id: str):
@@ -41,8 +42,8 @@ def test_clear_session(client: TestClient, session_id: str):
 
 # Integration tests (require API keys)
 @pytest.mark.skipif(
-    not pytest.importorskip("os").environ.get("OPENROUTER_API_KEY"),
-    reason="OPENROUTER_API_KEY not set"
+    not pytest.importorskip("os").environ.get("GEMINI_API_KEY"),
+    reason="GEMINI_API_KEY not set"
 )
 class TestChatIntegration:
     """Integration tests that require API keys."""

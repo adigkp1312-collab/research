@@ -2,14 +2,20 @@
 LangChain Client Configuration
 
 Direct Gemini 3 Flash API integration.
-Reads GEMINI_API_KEY from Lambda environment variables.
+Matches main codebase pattern: direct os.environ.get() calls.
+Pattern matches: backend/lambda/handlers/gemini.py
 """
 
 from __future__ import annotations
 import os
 from typing import Optional, List
 from langchain_google_genai import ChatGoogleGenerativeAI
-from .config import settings
+from .config import (
+    GEMINI_API_KEY,
+    LANGCHAIN_TRACING_V2,
+    LANGCHAIN_API_KEY,
+    LANGCHAIN_PROJECT,
+)
 
 # Only Gemini 3 Flash
 GEMINI_MODEL = "gemini-2.0-flash-exp"  # Latest Gemini 3 Flash
@@ -24,8 +30,8 @@ def create_chat_model(
     """
     Creates a LangChain ChatModel for Gemini 3 Flash.
     
+    Matches main codebase pattern: backend/lambda/handlers/gemini.py
     Reads GEMINI_API_KEY from Lambda environment variables.
-    Lambda automatically provides this via os.environ.
     
     Args:
         temperature: Sampling temperature (0-2)
@@ -44,11 +50,9 @@ def create_chat_model(
         >>> response = await model.ainvoke("Hello!")
     """
     
-    # Lambda automatically injects environment variables
-    # os.environ.get('GEMINI_API_KEY') works out of the box
-    api_key = settings.gemini_api_key or os.environ.get("GEMINI_API_KEY", "")
-    
-    if not api_key:
+    # Direct access - matches main codebase pattern
+    # Pattern: GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+    if not GEMINI_API_KEY:
         raise ValueError(
             "GEMINI_API_KEY not found in Lambda environment variables. "
             "Set it in Lambda configuration: "
@@ -58,10 +62,10 @@ def create_chat_model(
         )
     
     # Configure LangSmith tracing (optional)
-    if settings.langchain_tracing_v2 and settings.langchain_api_key:
+    if LANGCHAIN_TRACING_V2 and LANGCHAIN_API_KEY:
         os.environ["LANGCHAIN_TRACING_V2"] = "true"
-        os.environ["LANGCHAIN_API_KEY"] = settings.langchain_api_key
-        os.environ["LANGCHAIN_PROJECT"] = settings.langchain_project
+        os.environ["LANGCHAIN_API_KEY"] = LANGCHAIN_API_KEY
+        os.environ["LANGCHAIN_PROJECT"] = LANGCHAIN_PROJECT
     
     return ChatGoogleGenerativeAI(
         model=GEMINI_MODEL,
@@ -69,5 +73,5 @@ def create_chat_model(
         streaming=streaming,
         max_tokens=max_tokens,
         callbacks=callbacks,
-        google_api_key=api_key,
+        google_api_key=GEMINI_API_KEY,  # Direct constant access
     )

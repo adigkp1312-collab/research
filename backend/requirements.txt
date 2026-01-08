@@ -14,9 +14,8 @@ uvicorn[standard]>=0.27.0
 python-multipart>=0.0.9
 
 # Utilities
-python-dotenv>=1.0.0
-pydantic>=2.0.0
-pydantic-settings>=2.0.0
+python-dotenv>=1.0.0  # Only for local dev (Lambda doesn't use .env)
+pydantic>=2.0.0  # Required by FastAPI
 
 # Testing
 pytest>=8.0.0

@@ -1,0 +1,12 @@
+# LangChain Client Package Dependencies
+# Team: AI/ML
+
+# LangChain Core
+langchain>=0.3.0
+langchain-core>=0.3.0
+
+# Gemini Integration
+langchain-google-genai>=2.0.0
+
+# Internal dependency
+# -e ../core

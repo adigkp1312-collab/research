@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { CONFIG } from './config';
 // Model selection removed - using Gemini 3 Flash only
 
 interface Message {
@@ -7,8 +8,6 @@ interface Message {
   content: string;
   timestamp: Date;
 }
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 function App() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -49,7 +48,7 @@ function App() {
 
     try {
       // Call backend streaming endpoint
-      const response = await fetch(`${API_URL}/chat/stream`, {
+      const response = await fetch(`${CONFIG.API_URL}/chat/stream`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -111,7 +110,7 @@ function App() {
           <div style={styles.emptyState}>
             <h2 style={styles.emptyTitle}>Welcome to Adiyogi POC</h2>
             <p style={styles.emptyText}>
-              This is a proof-of-concept for LangChain + OpenRouter integration.
+              This is a proof-of-concept for LangChain + Gemini 3 Flash integration.
               Try asking about video production, storytelling, or Indian mythology.
             </p>
           </div>

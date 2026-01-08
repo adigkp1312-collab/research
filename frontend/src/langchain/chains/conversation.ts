@@ -7,7 +7,7 @@
 
 import { ConversationChain } from "langchain/chains";
 import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
-import { createChatModel, MODELS, type ModelId } from "../client";
+import { createChatModel } from "../client";
 import { getSessionMemory } from "../memory/buffer";
 
 // Director system prompt - customize as needed
@@ -31,7 +31,6 @@ Keep responses concise and focused. When appropriate, structure your output for 
 
 interface DirectorChainOptions {
   sessionId: string;
-  modelId?: ModelId;
   systemPrompt?: string;
   windowSize?: number;
 }
@@ -52,16 +51,12 @@ interface DirectorChainOptions {
 export const createDirectorChain = (options: DirectorChainOptions): ConversationChain => {
   const {
     sessionId,
-    modelId = MODELS.GEMINI_FLASH,
     systemPrompt = DIRECTOR_SYSTEM_PROMPT,
     windowSize = 10,
   } = options;
 
-  // Create the chat model
-  const model = createChatModel(modelId, {
-    temperature: 0.7,
-    streaming: true,
-  });
+  // Create the chat model (Gemini 3 Flash only)
+  const model = createChatModel(0.7, true);
 
   // Create the prompt template with system message and history
   const prompt = ChatPromptTemplate.fromMessages([
@@ -87,15 +82,13 @@ export const createDirectorChain = (options: DirectorChainOptions): Conversation
  * 
  * @param sessionId - Session identifier
  * @param message - User message
- * @param modelId - Optional model override
  * @returns AI response text
  */
 export const quickChat = async (
   sessionId: string,
-  message: string,
-  modelId?: ModelId
+  message: string
 ): Promise<string> => {
-  const chain = createDirectorChain({ sessionId, modelId });
+  const chain = createDirectorChain({ sessionId });
   const result = await chain.invoke({ input: message });
   return result.response as string;
 };
@@ -106,15 +99,13 @@ export const quickChat = async (
  * @param sessionId - Session identifier
  * @param message - User message
  * @param onToken - Callback for each token
- * @param modelId - Optional model override
  */
 export const streamChat = async (
   sessionId: string,
   message: string,
-  onToken: (token: string) => void,
-  modelId?: ModelId
+  onToken: (token: string) => void
 ): Promise<string> => {
-  const chain = createDirectorChain({ sessionId, modelId });
+  const chain = createDirectorChain({ sessionId });
   
   let fullResponse = "";
   

@@ -1,63 +1,50 @@
 """
 Configuration Management
 
-Optimized for Lambda environment variables.
-Reads GEMINI_API_KEY from Lambda environment (os.environ).
+Simple pattern matching main codebase.
+Direct os.environ.get() calls - no Pydantic complexity.
+Pattern matches: backend/lambda/handlers/gemini.py
 """
 
-from __future__ import annotations
 import os
-from functools import lru_cache
-from typing import List
-try:
-    from pydantic_settings import BaseSettings
-except ImportError:
-    from pydantic import BaseSettings
+
+# =============================================================================
+# GEMINI API CONFIGURATION
+# =============================================================================
+# API Configuration (keys from Lambda env vars)
+# Pattern matches: backend/lambda/handlers/gemini.py
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta'
+
+# =============================================================================
+# LANGSMITH CONFIGURATION (Optional)
+# =============================================================================
+LANGCHAIN_TRACING_V2 = os.environ.get('LANGCHAIN_TRACING_V2', 'false').lower() == 'true'
+LANGCHAIN_API_KEY = os.environ.get('LANGCHAIN_API_KEY', '')
+LANGCHAIN_PROJECT = os.environ.get('LANGCHAIN_PROJECT', 'adiyogi-poc')
+
+# =============================================================================
+# APPLICATION CONFIGURATION
+# =============================================================================
+APP_NAME = "LangChain POC - Gemini 3 Flash"
+DEBUG = False  # Set to False in Lambda
+CORS_ORIGINS = ["*"]  # Lambda handles CORS
 
 
-class Settings(BaseSettings):
-    """Application settings - optimized for Lambda environment variables."""
+# =============================================================================
+# VALIDATION
+# =============================================================================
+def validate_config():
+    """Validate that required configuration is present."""
+    missing = []
+    if not GEMINI_API_KEY:
+        missing.append('GEMINI_API_KEY')
     
-    # Gemini API Key - MUST be set in Lambda environment variables
-    # Lambda automatically injects GEMINI_API_KEY from environment
-    gemini_api_key: str = ""
+    if missing:
+        import warnings
+        warnings.warn(
+            f"Missing required environment variables: {missing}. "
+            "Configure them in Lambda environment variables."
+        )
     
-    # LangSmith Configuration (optional)
-    langchain_tracing_v2: bool = False
-    langchain_api_key: str = ""
-    langchain_project: str = "adiyogi-poc"
-    
-    # Application Configuration
-    app_name: str = "LangChain POC - Gemini 3 Flash"
-    debug: bool = False  # Set to False in Lambda
-    cors_origins: List[str] = ["*"]  # Lambda handles CORS
-    
-    class Config:
-        # Lambda doesn't use .env files, so don't load them
-        env_file = None
-        env_file_encoding = "utf-8"
-    
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        # Lambda provides environment variables directly
-        # os.environ.get works automatically in Lambda
-        if not self.gemini_api_key:
-            self.gemini_api_key = os.environ.get("GEMINI_API_KEY", "")
-        
-        # Validate key is set (will fail fast in Lambda if not configured)
-        if not self.gemini_api_key:
-            import warnings
-            warnings.warn(
-                "GEMINI_API_KEY not found in Lambda environment variables. "
-                "Configure it in Lambda console or via AWS CLI."
-            )
-
-
-@lru_cache()
-def get_settings() -> Settings:
-    """Get cached settings instance."""
-    return Settings()
-
-
-# Export settings instance
-settings = get_settings()
+    return len(missing) == 0

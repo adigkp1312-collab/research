@@ -3,13 +3,13 @@
 import os
 import pytest
 from src.chains import DIRECTOR_SYSTEM_PROMPT
-from src.langchain_client import MODELS
+from src.langchain_client import GEMINI_MODEL
 
 
 # Tests that require API keys
 @pytest.mark.skipif(
-    not os.environ.get("OPENROUTER_API_KEY"),
-    reason="OPENROUTER_API_KEY not set"
+    not os.environ.get("GEMINI_API_KEY"),
+    reason="GEMINI_API_KEY not set"
 )
 class TestChainCreation:
     """Tests that require API keys for chain creation."""
@@ -19,7 +19,6 @@ class TestChainCreation:
         from src.chains import create_director_chain
         chain = create_director_chain(
             session_id="test-chain-session",
-            model_id=MODELS["GEMINI_FLASH"],
         )
         assert chain is not None
         assert chain.memory is not None
@@ -42,8 +41,6 @@ def test_director_system_prompt_not_empty():
     assert "creative director" in DIRECTOR_SYSTEM_PROMPT.lower()
 
 
-def test_models_defined():
-    """Test that model constants are defined."""
-    assert "GEMINI_FLASH" in MODELS
-    assert "CLAUDE_SONNET" in MODELS
-    assert "GPT4_TURBO" in MODELS
+def test_gemini_model_defined():
+    """Test that Gemini model constant is defined."""
+    assert GEMINI_MODEL == "gemini-2.0-flash-exp"

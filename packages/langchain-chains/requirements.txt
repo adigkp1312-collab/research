@@ -1,0 +1,11 @@
+# LangChain Chains Package Dependencies
+# Team: AI/ML
+
+# LangChain Core
+langchain>=0.3.0
+langchain-core>=0.3.0
+
+# Internal dependencies
+# -e ../core
+# -e ../langchain-client
+# -e ../langchain-memory

@@ -1,0 +1,20 @@
+{
+  "health": {
+    "status": "ok",
+    "app_name": "Adiyogi LangChain",
+    "gemini_configured": true,
+    "langsmith_enabled": false,
+    "active_sessions": 0,
+    "model": "gemini-2.0-flash-exp"
+  },
+  "chat": {
+    "response": "Hello! I'm the Director AI, here to help with video production.",
+    "session_id": "test-session"
+  },
+  "models": {
+    "model": "gemini-2.0-flash-exp",
+    "model_name": "Gemini 3 Flash (Experimental)",
+    "provider": "Google",
+    "api_type": "Direct (via GEMINI_API_KEY)"
+  }
+}
