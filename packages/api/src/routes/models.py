@@ -8,8 +8,7 @@ Team: Backend
 
 from fastapi import APIRouter
 
-import sys
-sys.path.insert(0, str(__file__).replace('/packages/api/src/routes/models.py', ''))
+# PYTHONPATH is set by handler.py or main.py entry point
 from packages.langchain_client.src import GEMINI_MODEL, MODEL_NAME
 from packages.langchain_client.src.client import get_model_info
 

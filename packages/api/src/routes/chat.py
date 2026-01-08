@@ -10,8 +10,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-import sys
-sys.path.insert(0, str(__file__).replace('/packages/api/src/routes/chat.py', ''))
+# PYTHONPATH is set by handler.py or main.py entry point
 from packages.core.src import GEMINI_API_KEY
 from packages.langchain_chains.src import stream_chat, quick_chat
 from packages.langchain_memory.src import clear_session_memory

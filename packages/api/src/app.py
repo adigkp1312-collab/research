@@ -12,8 +12,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import from core package
-import sys
-sys.path.insert(0, str(__file__).replace('/packages/api/src/app.py', ''))
+# PYTHONPATH is set by handler.py or main.py entry point
 from packages.core.src import (
     GEMINI_API_KEY,
     LANGCHAIN_TRACING_V2,

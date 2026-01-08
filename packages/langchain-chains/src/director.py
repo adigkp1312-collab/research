@@ -15,8 +15,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.callbacks import AsyncIteratorCallbackHandler
 
 # Import from sibling packages
-import sys
-sys.path.insert(0, str(__file__).replace('/packages/langchain-chains/src/director.py', ''))
+# PYTHONPATH is set by handler.py or main.py entry point
 from packages.langchain_client.src import create_chat_model
 from packages.langchain_memory.src import get_session_memory
 

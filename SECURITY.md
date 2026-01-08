@@ -35,7 +35,7 @@ aws lambda update-function-configuration \
 
 ### 2. Code Reads from Environment
 ```python
-# backend/src/config.py
+# packages/core/src/config.py
 api_key = os.environ.get("GEMINI_API_KEY", "")
 
 # Lambda automatically injects environment variables
@@ -53,7 +53,7 @@ if not api_key:
 ### Option 1: AWS Secrets Manager (Most Secure)
 
 ```python
-# backend/src/config.py - Add this helper
+# packages/core/src/config.py - Add this helper
 import boto3
 import json
 

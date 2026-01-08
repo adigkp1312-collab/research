@@ -9,8 +9,7 @@ Team: Backend
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-import sys
-sys.path.insert(0, str(__file__).replace('/packages/api/src/routes/health.py', ''))
+# PYTHONPATH is set by handler.py or main.py entry point
 from packages.core.src import APP_NAME, GEMINI_API_KEY, LANGCHAIN_TRACING_V2, LANGCHAIN_API_KEY
 from packages.langchain_memory.src import get_active_session_count
 from packages.langchain_client.src import GEMINI_MODEL

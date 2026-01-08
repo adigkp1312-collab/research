@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Adiyogi LangChain API - Lambda + FastAPI
+
+Parameters:
+  GeminiApiKey:
+    Type: String
+    Description: Google Gemini API Key
+    NoEcho: true
+  LangchainTracingV2:
+    Type: String
+    Default: 'false'
+    Description: Enable LangSmith tracing (true/false)
+  LangchainApiKey:
+    Type: String
+    Default: ''
+    Description: LangSmith API Key (optional)
+    NoEcho: true
+  LangchainProject:
+    Type: String
+    Default: 'adiyogi-poc'
+    Description: LangSmith project name
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Runtime: python3.11
+
+Resources:
+  LangChainAPI:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: apps.server.handler.handler
+      Runtime: python3.11
+      MemorySize: 512
+      Timeout: 30
+      Environment:
+        Variables:
+          GEMINI_API_KEY: !Ref GeminiApiKey
+          LANGCHAIN_TRACING_V2: !Ref LangchainTracingV2
+          LANGCHAIN_API_KEY: !Ref LangchainApiKey
+          LANGCHAIN_PROJECT: !Ref LangchainProject
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+        ApiRoot:
+          Type: HttpApi
+          Properties:
+            Path: /
+            Method: ANY
+
+Outputs:
+  ApiUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub 'https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com'
+  
+  FunctionName:
+    Description: Lambda Function Name
+    Value: !Ref LangChainAPI

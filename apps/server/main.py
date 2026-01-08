@@ -9,9 +9,10 @@ Team: DevOps
 import sys
 from pathlib import Path
 
-# Add packages to path
+# Add packages to path for 'from packages.* import ...'
 root = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(root))
+if str(root) not in sys.path:
+    sys.path.insert(0, str(root))
 
 # Import and run the app
 from packages.api.src import app
