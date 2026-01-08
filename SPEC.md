@@ -1,111 +1,119 @@
 # Project Specification
 
-**Project:** Adiyogi LangChain  
+**Version:** 1.0  
 **Last Updated:** 2024-01-08  
 **Status:** Active
 
+This document is the **single source of truth** for project requirements. AI agents and developers MUST read this before making changes.
+
 ---
 
-## 1. Core Requirements
+## Core Requirements
 
-### 1.1 API Key Management
+### 1. API Key Management
 
-| Requirement | Status |
-|-------------|--------|
-| All API keys MUST be read from Lambda environment variables | MANDATORY |
-| Keys are accessed via `os.environ.get('KEY_NAME')` | MANDATORY |
-| No alternative key sources (localStorage, .env files, hardcoded) | MANDATORY |
+| Requirement | Description |
+|-------------|-------------|
+| **MUST** | Use Lambda environment variables for all API keys |
+| **MUST** | Read keys via `os.environ.get('KEY_NAME')` |
+| **MUST NOT** | Use `export` commands in documentation |
+| **MUST NOT** | Use `.env` files (even for local development) |
+| **MUST NOT** | Hardcode any keys in source code |
+| **MUST NOT** | Use localStorage/sessionStorage for sensitive data |
 
-**Implementation:**
+**Rationale:** Lambda injects environment variables automatically. Using `os.environ.get()` works identically in Lambda and local SAM testing.
+
+### 2. Local Development
+
+| Requirement | Description |
+|-------------|-------------|
+| **MUST** | Use AWS SAM for local Lambda testing |
+| **MUST** | Use `env.json` for local environment variables (gitignored) |
+| **MUST NOT** | Suggest `export` commands for setting keys |
+
+### 3. Configuration Pattern
+
 ```python
-# CORRECT - Lambda environment variables
+# CORRECT - Lambda-compatible
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
 
-# WRONG - Do NOT use these patterns
-# localStorage.getItem('key')  ❌
-# load_dotenv()  ❌
-# API_KEY = "hardcoded"  ❌
+# WRONG - Do not use
+load_dotenv()  # No .env files
+os.environ['KEY'] = 'hardcoded'  # No hardcoding
 ```
 
-### 1.2 Data Persistence
+---
 
-| Requirement | Status |
-|-------------|--------|
-| NO localStorage or sessionStorage | MANDATORY |
-| NO client-side data persistence | MANDATORY |
-| All data via Supabase or backend APIs | MANDATORY |
+## Prohibited Patterns
 
-### 1.3 Documentation
+### Code
 
-| Requirement | Status |
-|-------------|--------|
-| No `export KEY=value` commands in README | MANDATORY |
-| Document Lambda environment variable setup only | MANDATORY |
-| Reference AWS Console or AWS CLI for key setup | MANDATORY |
+```python
+# ❌ PROHIBITED
+localStorage.setItem('api_key', key)
+sessionStorage.setItem('data', value)
+API_KEY = "sk-hardcoded-key"
+load_dotenv()
+export GEMINI_API_KEY=xxx  # In documentation
+
+# ✅ REQUIRED
+os.environ.get('GEMINI_API_KEY', '')
+```
+
+### Documentation
+
+```markdown
+# ❌ PROHIBITED
+export GEMINI_API_KEY=your_key
+echo "KEY=value" >> ~/.zshrc
+Create a .env file with...
+
+# ✅ REQUIRED
+Set GEMINI_API_KEY in Lambda environment variables
+Use SAM local with env.json for testing
+```
 
 ---
 
-## 2. Prohibited Patterns
+## Package Ownership
 
-**DO NOT USE:**
-
-| Pattern | Reason |
-|---------|--------|
-| `export GEMINI_API_KEY=...` in docs | Suggests non-Lambda approach |
-| `localStorage.setItem()` | Client-side persistence banned |
-| `sessionStorage` | Client-side persistence banned |
-| `.env` file loading | Lambda doesn't use .env files |
-| `load_dotenv()` | Lambda doesn't use .env files |
-| Hardcoded API keys | Security risk |
+| Package | Team | Approval Required From |
+|---------|------|----------------------|
+| `packages/core` | Platform | Platform Lead |
+| `packages/langchain-*` | AI/ML | AI/ML Lead |
+| `packages/api` | Backend | Backend Lead |
+| `packages/ui` | Frontend | Frontend Lead |
+| `packages/testing` | QA | QA Lead |
+| `apps/*` | DevOps | DevOps Lead |
 
 ---
 
-## 3. Team Ownership
+## Environment Variables
 
-| Package | Team | Responsibility |
-|---------|------|----------------|
-| `packages/core` | Platform | Config, types, utilities |
-| `packages/langchain-client` | AI/ML | Gemini model factory |
-| `packages/langchain-memory` | AI/ML | Session memory |
-| `packages/langchain-chains` | AI/ML | Conversation chains |
-| `packages/api` | Backend | REST endpoints |
-| `packages/ui` | Frontend | React components |
-| `packages/testing` | QA | E2E + integration tests |
+| Variable | Required | Source | Description |
+|----------|----------|--------|-------------|
+| `GEMINI_API_KEY` | Yes | Lambda Console | Google Gemini API key |
+| `LANGCHAIN_API_KEY` | No | Lambda Console | LangSmith API key |
+| `LANGCHAIN_TRACING_V2` | No | Lambda Console | Enable tracing (`true`/`false`) |
+| `LANGCHAIN_PROJECT` | No | Lambda Console | LangSmith project name |
 
 ---
 
-## 4. Environment Variables
+## Compliance Checklist
 
-### Required
+Before any change, verify:
 
-| Variable | Description | Set Via |
-|----------|-------------|---------|
-| `GEMINI_API_KEY` | Google Gemini API key | Lambda Console |
-
-### Optional
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `LANGCHAIN_TRACING_V2` | Enable LangSmith | `false` |
-| `LANGCHAIN_API_KEY` | LangSmith API key | - |
-| `LANGCHAIN_PROJECT` | LangSmith project | `adiyogi-poc` |
+- [ ] Read this SPEC.md
+- [ ] Checked relevant ADRs in `docs/adr/`
+- [ ] No prohibited patterns introduced
+- [ ] Lambda environment variables used (not export/dotenv)
+- [ ] Tests added for new functionality
+- [ ] Documentation updated
 
 ---
 
-## 5. Compliance Checklist
+## References
 
-Before any commit, verify:
-
-- [ ] No prohibited patterns used
-- [ ] API keys only from Lambda environment variables
-- [ ] No localStorage/sessionStorage usage
-- [ ] No hardcoded secrets
-- [ ] Documentation aligned with Lambda-only approach
-- [ ] ADR created for new architectural decisions
-
----
-
-## 6. References
-
-- [ADR-001: Lambda Environment Variables](docs/adr/001-lambda-environment-variables.md)
-- [Security: API Keys](docs/security/API_KEYS.md)
+- ADRs: `docs/adr/`
+- Checklist: `CHECKLIST.md`
+- AI Rules: `.cursor/rules.md`

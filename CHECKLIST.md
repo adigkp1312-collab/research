@@ -1,96 +1,105 @@
 # Pre-Commit Checklist
 
-**MANDATORY**: Verify ALL items before every commit.
+Verify ALL items before committing changes.
 
 ---
 
-## 1. Specification Compliance
+## Requirements Compliance
 
-- [ ] Read SPEC.md before making changes
-- [ ] No prohibited patterns introduced
-- [ ] API keys only from Lambda environment variables
-- [ ] No localStorage/sessionStorage usage
-- [ ] No hardcoded secrets
+- [ ] Read `SPEC.md` before starting
+- [ ] Checked relevant ADRs in `docs/adr/`
+- [ ] No prohibited patterns introduced (see below)
 
 ---
 
-## 2. Documentation Alignment
+## Prohibited Patterns Check
 
-- [ ] No `export KEY=value` commands in README
-- [ ] Lambda Console/CLI instructions for key setup
-- [ ] Documentation matches SPEC.md requirements
+### Code - Verify NONE of these exist:
+
+```python
+# Search for these - they should NOT exist
+localStorage.setItem
+sessionStorage.setItem
+load_dotenv
+from dotenv import
+API_KEY = "sk-
+GEMINI_API_KEY = "AI
+```
+
+### Documentation - Verify NONE of these exist:
+
+```markdown
+# Search for these - they should NOT exist
+export GEMINI_API_KEY=
+export LANGCHAIN_API_KEY=
+echo ".*KEY.*" >> ~/
+Create .env file
+```
 
 ---
 
-## 3. Architecture Decisions
+## Required Patterns Check
 
-- [ ] New architectural decisions have ADR
-- [ ] ADR approved before implementation
-- [ ] docs/adr/README.md index updated
+### API Keys - Verify this pattern is used:
+
+```python
+# This pattern MUST be used for all keys
+os.environ.get('KEY_NAME', '')
+```
+
+### Local Dev - Verify SAM is documented:
+
+```markdown
+# Documentation should reference SAM, not export
+sam local start-api --env-vars env.json
+```
 
 ---
 
-## 4. Code Quality
+## Code Quality
 
 - [ ] Tests added for new functionality
 - [ ] Existing tests pass
 - [ ] No linter errors
-- [ ] Type checking passes (if applicable)
+- [ ] Type hints added (Python)
+- [ ] TypeScript types correct
 
 ---
 
-## 5. Team Ownership
+## Documentation
 
-- [ ] Changes in correct package per SPEC.md
-- [ ] Team ownership respected
-- [ ] Cross-team changes discussed
-
----
-
-## 6. Security
-
-- [ ] No API keys in source code
-- [ ] No secrets in commit
-- [ ] .gitignore includes sensitive files
-- [ ] env.json not committed
+- [ ] README updated if needed
+- [ ] ADR created for architectural decisions
+- [ ] Code comments for complex logic
+- [ ] API docs updated (if API changed)
 
 ---
 
-## Quick Verification Commands
+## Package Ownership
+
+- [ ] Changes only in packages I'm authorized to modify
+- [ ] Cross-package changes approved by relevant team
+
+---
+
+## Commit
+
+- [ ] Commit message follows format: `type: description`
+- [ ] References ADR if applicable: `Refs: ADR-001`
+- [ ] No sensitive data in commit
+
+---
+
+## Quick Grep Commands
+
+Run these to verify compliance:
 
 ```bash
 # Check for prohibited patterns
-grep -r "localStorage" packages/ --include="*.ts" --include="*.tsx"
+grep -r "localStorage\|sessionStorage" packages/
+grep -r "load_dotenv\|from dotenv" packages/
 grep -r "export GEMINI_API_KEY" .
-grep -r "load_dotenv" packages/ --include="*.py"
+grep -r "API_KEY = \"" packages/
 
-# Run tests
-./scripts/test-all.sh
-
-# Check git status
-git diff --cached --name-only
+# Should return no results
 ```
-
----
-
-## If Any Item Fails
-
-1. STOP - Do not commit
-2. Fix the issue
-3. Re-verify checklist
-4. Then commit
-
----
-
-## Commit Message Format
-
-```
-type: Short description
-
-- Detail 1
-- Detail 2
-
-Refs: ADR-NNN (if applicable)
-```
-
-Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`

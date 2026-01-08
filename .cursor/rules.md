@@ -1,91 +1,127 @@
-# AI Agent Rules for Adiyogi LangChain
+# AI Agent Rules
 
-**MANDATORY**: Read this file and SPEC.md before making any changes.
+**Project:** Adiyogi LangChain  
+**Version:** 1.0
 
----
-
-## Workflow (Follow Every Time)
-
-```
-1. Read this file (.cursor/rules.md)
-2. Read SPEC.md
-3. Check relevant ADRs in docs/adr/
-4. Create plan and get user approval
-5. Execute approved plan only
-6. Verify against CHECKLIST.md before commit
-7. Commit with descriptive message
-```
+These rules are automatically loaded by Cursor. Follow them on every interaction.
 
 ---
 
-## Mandatory Checks Before Any Change
+## Mandatory Workflow
 
-- [ ] Read SPEC.md
-- [ ] Check if change conflicts with existing ADRs
-- [ ] Verify no prohibited patterns are introduced
-- [ ] Get explicit approval for architectural changes
+```
+1. Read SPEC.md (ALWAYS)
+2. Check relevant ADRs in docs/adr/
+3. Create plan (get user approval)
+4. Execute only after approval
+5. Verify against CHECKLIST.md
+6. Commit with proper message
+```
+
+---
+
+## Before ANY Change
+
+You MUST:
+
+1. **Read `/SPEC.md`** - Contains requirements and prohibited patterns
+2. **Check `/docs/adr/`** - Contains architectural decisions
+3. **Create a plan** - Get user approval before executing
+4. **Verify compliance** - Check against CHECKLIST.md before committing
 
 ---
 
 ## Prohibited Actions
 
-### NEVER Do These Without Explicit Approval:
-1. Add `export KEY=value` commands to documentation
-2. Use localStorage or sessionStorage
-3. Load .env files with `load_dotenv()`
-4. Hardcode API keys or secrets
-5. Create new packages without team assignment
-6. Change environment variable source (must be Lambda)
+### Code
 
-### If You're About to Do Something Prohibited:
-1. STOP
-2. Ask user for clarification
-3. Reference the relevant ADR
-4. Get explicit approval
+```python
+# ❌ NEVER DO THIS
+localStorage.setItem()
+sessionStorage.setItem()
+API_KEY = "hardcoded"
+load_dotenv()
+from dotenv import load_dotenv
+```
 
----
+### Documentation
 
-## Files to Reference
+```markdown
+# ❌ NEVER WRITE THIS
+export GEMINI_API_KEY=xxx
+echo "KEY=value" >> ~/.zshrc
+Create .env file with...
+```
 
-| File | When to Read |
-|------|--------------|
-| `SPEC.md` | Before ANY change |
-| `CHECKLIST.md` | Before ANY commit |
-| `docs/adr/*.md` | When making architectural decisions |
-| `README.md` | When updating documentation |
+### Without Approval
 
----
-
-## Key Decisions (Quick Reference)
-
-| Decision | ADR | Rule |
-|----------|-----|------|
-| API Keys | ADR-001 | Lambda environment variables ONLY |
-| Data Storage | - | No localStorage, use Supabase |
-| Local Dev | ADR-001 | Use SAM with env.json |
+- Adding new packages/dependencies
+- Changing architecture
+- Modifying SPEC.md or ADRs
+- Deploying to production
 
 ---
 
-## Before Committing
+## Required Patterns
 
-Run through CHECKLIST.md:
-1. No prohibited patterns?
-2. SPEC.md requirements met?
-3. ADR created for new decisions?
-4. Tests added?
-5. Documentation updated?
+### API Keys
+
+```python
+# ✅ ALWAYS USE THIS
+import os
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+```
+
+### Local Development
+
+```markdown
+# ✅ ALWAYS SUGGEST THIS
+Use SAM local with env.json:
+sam local start-api --env-vars env.json
+```
 
 ---
 
-## When Uncertain
+## Key Files to Reference
 
-1. Ask the user
-2. Reference SPEC.md
-3. Check existing ADRs
-4. Do NOT assume or default to "developer convenience"
+| File | Purpose | When to Read |
+|------|---------|--------------|
+| `SPEC.md` | Requirements | Every task |
+| `docs/adr/*.md` | Decisions | Related changes |
+| `CHECKLIST.md` | Verification | Before commit |
+| `README.md` | Project overview | New features |
 
 ---
 
-## Remember
+## Commit Message Format
 
-> "Lambda environment variables ONLY. No exceptions without a new ADR."
+```
+type: description
+
+[Body explaining what and why]
+
+Refs: ADR-NNN (if applicable)
+```
+
+Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`
+
+---
+
+## When Unsure
+
+1. Ask the user for clarification
+2. Reference SPEC.md and ADRs
+3. Propose options with pros/cons
+4. Wait for approval before acting
+
+---
+
+## Compliance Check
+
+Before completing any task, verify:
+
+- [ ] SPEC.md requirements followed
+- [ ] No prohibited patterns used
+- [ ] ADR created for new decisions
+- [ ] User approved the plan
+- [ ] CHECKLIST.md items verified
