@@ -35,9 +35,6 @@ Adiyogilanchain/
 git clone https://github.com/adigkp1312-collab/Adiyogilanchain.git
 cd Adiyogilanchain
 
-# Set API key
-export GEMINI_API_KEY=your_key_here
-
 # Install backend deps
 pip install -r apps/server/requirements.txt
 
@@ -45,11 +42,35 @@ pip install -r apps/server/requirements.txt
 cd packages/ui && npm install && cd ../..
 ```
 
-### Run
+### Configure API Key (Lambda Environment Variables)
+
+**Production (Lambda Console):**
+1. Lambda → Configuration → Environment variables
+2. Add: `GEMINI_API_KEY` = `your_key`
+
+**Production (AWS CLI):**
+```bash
+aws lambda update-function-configuration \
+  --function-name your-function \
+  --environment Variables="{GEMINI_API_KEY=your_key}"
+```
+
+**Local Development (SAM):**
+```bash
+# Create env.json (gitignored)
+echo '{"Function": {"GEMINI_API_KEY": "your_key"}}' > env.json
+
+# Start local Lambda
+sam local start-api --env-vars env.json
+```
+
+See [ADR-001](docs/adr/001-lambda-environment-variables.md) for details.
+
+### Run (Local with SAM)
 
 ```bash
-# Start backend (from root)
-PYTHONPATH=. uvicorn packages.api.src.app:app --reload --port 8000
+# Start backend with SAM
+sam local start-api --env-vars env.json --port 8000
 
 # Start frontend (new terminal)
 cd packages/ui && npm run dev
@@ -86,9 +107,12 @@ cd packages/testing && npm run test:e2e
 
 ## Documentation
 
+- [Project Specification](SPEC.md) - Requirements and rules
+- [Pre-Commit Checklist](CHECKLIST.md) - Verification before commit
 - [Architecture Overview](docs/architecture/OVERVIEW.md)
 - [LLM Flow](docs/architecture/LLM_FLOW.md)
 - [API Key Security](docs/security/API_KEYS.md)
+- [ADRs](docs/adr/README.md) - Architecture decisions
 
 ## License
 

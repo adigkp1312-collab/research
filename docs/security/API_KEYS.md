@@ -25,15 +25,41 @@ This project uses secure environment variable management for API keys.
 - ❌ Log keys in application logs
 - ❌ Share keys via chat/email
 
-## Local Development
+## Setting Keys (Lambda Environment Variables ONLY)
+
+Per [ADR-001](../adr/001-lambda-environment-variables.md), all API keys must be set via Lambda environment variables.
+
+### Production (Lambda Console)
+
+1. Go to Lambda → Your Function → Configuration → Environment variables
+2. Add: `GEMINI_API_KEY` = `your_key`
+3. Save
+
+### Production (AWS CLI)
 
 ```bash
-# Set environment variable
-export GEMINI_API_KEY=your_key_here
-
-# Or use .env file (gitignored)
-echo "GEMINI_API_KEY=your_key" > .env
+aws lambda update-function-configuration \
+  --function-name your-function \
+  --environment Variables="{GEMINI_API_KEY=your_key}" \
+  --region us-east-1
 ```
+
+### Local Development (SAM)
+
+```bash
+# Create env.json (gitignored - never commit!)
+echo '{"Function": {"GEMINI_API_KEY": "your_key"}}' > env.json
+
+# Run with SAM
+sam local start-api --env-vars env.json
+```
+
+## Prohibited Patterns
+
+- ❌ `export GEMINI_API_KEY=...` - Not Lambda-compatible
+- ❌ `.env` files with `load_dotenv()` - Lambda doesn't use .env
+- ❌ Hardcoded keys - Security risk
+- ❌ localStorage - Client-side, insecure
 
 ## Lambda Deployment
 

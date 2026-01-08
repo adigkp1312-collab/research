@@ -9,6 +9,11 @@ venv/
 .env
 .env.local
 .env.*.local
+env.json
+
+# AWS SAM
+.aws-sam/
+samconfig.toml
 
 # Build outputs
 dist/
