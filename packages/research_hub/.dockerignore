@@ -1,0 +1,46 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local data
+data/
+downloads/
+*.json
+!package.json
+
+# Credentials (will be provided via env vars or Secret Manager)
+credentials.json
+*.pem
+*.key
+
+# Docs
+docs/
+*.md
+!README.md
+
+# Tests
+tests/
+*_test.py
+test_*.py
+
+# Build
+Dockerfile
+docker-compose*.yml
+cloudbuild.yaml
+deploy.sh

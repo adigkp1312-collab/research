@@ -1,0 +1,20 @@
+# Firestore
+google-cloud-firestore>=2.11.0
+
+# Cloud Storage
+google-cloud-storage>=2.10.0
+
+# API Framework
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.0.0
+
+# HTTP Client
+httpx>=0.25.0
+requests>=2.31.0
+
+# Browser Automation
+playwright>=1.40.0
+
+# Async Support
+aiohttp>=3.9.0
