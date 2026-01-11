@@ -4,17 +4,10 @@ steps:
     args:
       - 'build'
       - '-t'
-      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/research-hub/api:$COMMIT_SHA'
-      - '-t'
       - '${_REGION}-docker.pkg.dev/$PROJECT_ID/research-hub/api:latest'
       - '.'
 
   # Push to Artifact Registry
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'push'
-      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/research-hub/api:$COMMIT_SHA'
-
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
@@ -28,7 +21,7 @@ steps:
       - 'deploy'
       - 'research-hub-api'
       - '--image'
-      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/research-hub/api:$COMMIT_SHA'
+      - '${_REGION}-docker.pkg.dev/$PROJECT_ID/research-hub/api:latest'
       - '--region'
       - '${_REGION}'
       - '--platform'
