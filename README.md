@@ -28,7 +28,8 @@ Adiyogilanchain/
 ### Prerequisites
 - Python 3.11+
 - Node.js 20+
-- Gemini API Key ([Get one here](https://aistudio.google.com/app/apikey))
+- Google Cloud Project with Vertex AI API enabled
+- GCP Service Account with Vertex AI permissions
 
 ### Setup
 
@@ -44,35 +45,40 @@ pip install -r apps/server/requirements.txt
 cd packages/ui && npm install && cd ../..
 ```
 
-### Configure API Key (Lambda Environment Variables)
+### Configure Google Cloud Project
 
-**Production (Lambda Console):**
-1. Lambda → Configuration → Environment variables
-2. Add: `GEMINI_API_KEY` = `your_key`
+**Production (Cloud Run):**
+1. Create a Google Cloud Project
+2. Enable Vertex AI API
+3. Set up Application Default Credentials or Service Account
+4. Deploy with environment variables:
+   - `GOOGLE_CLOUD_PROJECT` = `your-project-id`
+   - `VERTEX_AI_LOCATION` = `us-central1` (or your preferred region)
 
-**Production (AWS CLI):**
+**Local Development:**
 ```bash
-aws lambda update-function-configuration \
-  --function-name your-function \
-  --environment Variables="{GEMINI_API_KEY=your_key}"
+# Set up Application Default Credentials
+gcloud auth application-default login
+
+# Or set environment variables
+export GOOGLE_CLOUD_PROJECT=your-project-id
+export VERTEX_AI_LOCATION=us-central1
+
+# Run locally
+python apps/server/main.py
 ```
 
-**Local Development (SAM):**
-```bash
-# Create env.json (gitignored)
-echo '{"Function": {"GEMINI_API_KEY": "your_key"}}' > env.json
+See deployment instructions below for Cloud Run setup.
 
-# Start local Lambda
-sam local start-api --env-vars env.json
-```
-
-See [ADR-001](docs/adr/001-lambda-environment-variables.md) for details.
-
-### Run (Local with SAM)
+### Run (Local Development)
 
 ```bash
-# Start backend with SAM
-sam local start-api --env-vars env.json --port 8000
+# Set environment variables
+export GOOGLE_CLOUD_PROJECT=your-project-id
+export VERTEX_AI_LOCATION=us-central1
+
+# Start backend
+python apps/server/main.py
 
 # Start frontend (new terminal)
 cd packages/ui && npm run dev
@@ -94,6 +100,21 @@ Access:
 | `packages/ui` | Frontend | - |
 | `packages/testing` | QA | - |
 | `apps/*` | DevOps | - |
+
+## Deployment
+
+### Main API (Cloud Run)
+
+Deploy the main API to Cloud Run:
+
+```bash
+cd apps/server
+gcloud run deploy langchain-api \
+  --source . \
+  --region us-central1 \
+  --set-env-vars GOOGLE_CLOUD_PROJECT=your-project-id,VERTEX_AI_LOCATION=us-central1 \
+  --allow-unauthenticated
+```
 
 ## Research Service (Cloud Run)
 

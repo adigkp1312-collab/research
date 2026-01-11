@@ -14,7 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 # Import from core package
 # PYTHONPATH is set by handler.py or main.py entry point
 from packages.core.src import (
-    GEMINI_API_KEY,
+    GOOGLE_CLOUD_PROJECT,
     LANGCHAIN_TRACING_V2,
     LANGCHAIN_API_KEY,
     LANGCHAIN_PROJECT,
@@ -24,7 +24,7 @@ from packages.core.src import (
 )
 
 # Import routes
-from .routes import chat_router, health_router, models_router
+from .routes import chat_router, health_router, models_router, datastore_router
 
 
 @asynccontextmanager
@@ -43,10 +43,10 @@ async def lifespan(app: FastAPI):
         os.environ["LANGCHAIN_PROJECT"] = LANGCHAIN_PROJECT
         print(f"✅ LangSmith tracing enabled: {LANGCHAIN_PROJECT}")
     
-    if GEMINI_API_KEY:
-        print("✅ Gemini API key configured")
+    if GOOGLE_CLOUD_PROJECT:
+        print("✅ Vertex AI configured")
     else:
-        print("⚠️ GEMINI_API_KEY not set")
+        print("⚠️ GOOGLE_CLOUD_PROJECT not set")
     
     print(f"🚀 {APP_NAME} started")
     
@@ -64,7 +64,7 @@ def create_app() -> FastAPI:
     """
     application = FastAPI(
         title=APP_NAME,
-        description="LangChain + Gemini API for Adiyogi Arts",
+        description="Vertex AI + Gemini for Adiyogi Arts",
         version="0.1.0",
         lifespan=lifespan,
     )
@@ -82,6 +82,7 @@ def create_app() -> FastAPI:
     application.include_router(health_router, tags=["Health"])
     application.include_router(chat_router, prefix="/chat", tags=["Chat"])
     application.include_router(models_router, prefix="/models", tags=["Models"])
+    application.include_router(datastore_router, prefix="/datastore", tags=["Datastore"])
     
     return application
 

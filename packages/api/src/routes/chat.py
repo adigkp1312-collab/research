@@ -11,7 +11,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 # PYTHONPATH is set by handler.py or main.py entry point
-from packages.core.src import GEMINI_API_KEY
+from packages.core.src import GOOGLE_CLOUD_PROJECT
 from packages.langchain_chains.src import stream_chat, quick_chat
 from packages.langchain_memory.src import clear_session_memory
 
@@ -37,10 +37,10 @@ async def chat(request: ChatRequest):
     
     Returns complete response after generation.
     """
-    if not GEMINI_API_KEY:
+    if not GOOGLE_CLOUD_PROJECT:
         raise HTTPException(
             status_code=500,
-            detail="GEMINI_API_KEY not configured"
+            detail="GOOGLE_CLOUD_PROJECT not configured"
         )
     
     try:
@@ -64,10 +64,10 @@ async def chat_stream(request: ChatRequest):
     
     Returns tokens as they are generated.
     """
-    if not GEMINI_API_KEY:
+    if not GOOGLE_CLOUD_PROJECT:
         raise HTTPException(
             status_code=500,
-            detail="GEMINI_API_KEY not configured"
+            detail="GOOGLE_CLOUD_PROJECT not configured"
         )
     
     async def generate():

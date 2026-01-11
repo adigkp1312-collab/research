@@ -1,12 +1,14 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Adiyogi LangChain API - Lambda + FastAPI
+# NOTE: This template is deprecated. Use Cloud Run deployment instead.
+# See apps/server/Dockerfile for Cloud Run deployment.
 
 Parameters:
-  GeminiApiKey:
+  GoogleCloudProject:
     Type: String
-    Description: Google Gemini API Key
-    NoEcho: true
+    Description: Google Cloud Project ID (for Vertex AI)
+    NoEcho: false
   LangchainTracingV2:
     Type: String
     Default: 'false'
@@ -38,7 +40,8 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          GEMINI_API_KEY: !Ref GeminiApiKey
+          GOOGLE_CLOUD_PROJECT: !Ref GoogleCloudProject
+          VERTEX_AI_LOCATION: us-central1
           LANGCHAIN_TRACING_V2: !Ref LangchainTracingV2
           LANGCHAIN_API_KEY: !Ref LangchainApiKey
           LANGCHAIN_PROJECT: !Ref LangchainProject

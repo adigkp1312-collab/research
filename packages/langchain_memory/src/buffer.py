@@ -1,34 +1,60 @@
 """
 Memory Buffer - Session State Management
 
-Provides BufferWindowMemory for conversation context.
+Provides custom conversation memory for Vertex AI.
 
 Team: AI/ML
 """
 
-from langchain.memory import ConversationBufferWindowMemory
-from langchain_community.chat_message_histories import ChatMessageHistory
+from typing import List, Dict
 
 # Store session memories (in production, use Redis or database)
-_session_memories: dict[str, ConversationBufferWindowMemory] = {}
+_session_memories: dict[str, 'ConversationMemory'] = {}
+
+
+class ConversationMemory:
+    """Custom conversation memory with windowing."""
+    
+    def __init__(self, window_size: int = 10):
+        self.window_size = window_size
+        self.messages: List[Dict[str, str]] = []
+    
+    def save_context(self, input_dict: Dict[str, str], output_dict: Dict[str, str]):
+        """Save a user input and assistant output."""
+        if "input" in input_dict:
+            self.messages.append({"role": "user", "content": input_dict["input"]})
+        if "output" in output_dict:
+            self.messages.append({"role": "assistant", "content": output_dict["output"]})
+        
+        # Keep only last window_size messages
+        if len(self.messages) > self.window_size * 2:  # *2 because each exchange has 2 messages
+            self.messages = self.messages[-(self.window_size * 2):]
+    
+    def get_messages(self) -> List[Dict[str, str]]:
+        """Get all messages in memory."""
+        return self.messages.copy()
+    
+    def clear(self):
+        """Clear all messages."""
+        self.messages = []
 
 
 def get_session_memory(
     session_id: str,
     window_size: int = 10,
-) -> ConversationBufferWindowMemory:
+) -> ConversationMemory:
     """
-    Creates or retrieves a BufferWindowMemory for a session.
+    Creates or retrieves a ConversationMemory for a session.
     
-    BufferWindowMemory keeps the last K messages in context,
+    ConversationMemory keeps the last K message exchanges in context,
     which is ideal for chat applications with limited context windows.
     
     Args:
         session_id: Unique session identifier
-        window_size: Number of messages to keep (default: 10)
+        window_size: Number of message exchanges to keep (default: 10)
     
     Returns:
-        BufferWindowMemory instance
+        ConversationMemory instance
     
     Example:
         >>> memory = get_session_memory("user-123")
@@ -39,12 +65,7 @@ def get_session_memory(
         return _session_memories[session_id]
     
     # Create new memory for this session
-    memory = ConversationBufferWindowMemory(
-        k=window_size,
-        return_messages=True,
-        memory_key="history",
-        chat_memory=ChatMessageHistory(),
-    )
+    memory = ConversationMemory(window_size=window_size)
     
     _session_memories[session_id] = memory
     return memory

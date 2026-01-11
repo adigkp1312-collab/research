@@ -1,0 +1,123 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // =========================================================================
+    // HELPER FUNCTIONS
+    // =========================================================================
+
+    // Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Check if user owns the document
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Check if user is part of the project (for team access)
+    // This assumes you have a projects collection with member lists
+    function isProjectMember(projectId) {
+      return isAuthenticated() && (
+        // User created the project
+        get(/databases/$(database)/documents/projects/$(projectId)).data.created_by == request.auth.uid
+        ||
+        // User is in the members list
+        request.auth.uid in get(/databases/$(database)/documents/projects/$(projectId)).data.members
+      );
+    }
+
+    // Check if request has valid research type
+    function hasValidResearchType() {
+      return request.resource.data.research_type in [
+        'competitor', 'market', 'video_ad', 'social_media', 'audience', 'trend'
+      ];
+    }
+
+    // Check if request has valid status
+    function hasValidStatus() {
+      return request.resource.data.status in [
+        'pending', 'processing', 'completed', 'failed'
+      ];
+    }
+
+    // Check required fields exist
+    function hasRequiredFields() {
+      return request.resource.data.keys().hasAll([
+        'id', 'project_id', 'user_id', 'research_type', 'input_query',
+        'analysis_data', 'created_at'
+      ]);
+    }
+
+    // =========================================================================
+    // RESEARCH HUB ENTRIES
+    // =========================================================================
+
+    match /research_hub_entries/{researchId} {
+
+      // Anyone authenticated can read research in their projects
+      allow read: if isAuthenticated() && (
+        // User owns the research
+        resource.data.user_id == request.auth.uid
+        ||
+        // User is member of the project
+        isProjectMember(resource.data.project_id)
+      );
+
+      // Create: Authenticated users can create research
+      allow create: if isAuthenticated()
+        && hasRequiredFields()
+        && hasValidResearchType()
+        && request.resource.data.user_id == request.auth.uid;
+
+      // Update: Only owner can update, with restrictions
+      allow update: if isOwner(resource.data.user_id)
+        && hasValidStatus()
+        // Cannot change ownership
+        && request.resource.data.user_id == resource.data.user_id
+        && request.resource.data.project_id == resource.data.project_id
+        // Cannot change creation time
+        && request.resource.data.created_at == resource.data.created_at;
+
+      // Delete: Only owner can delete
+      allow delete: if isOwner(resource.data.user_id);
+    }
+
+    // =========================================================================
+    // PROJECTS (if you have a projects collection)
+    // =========================================================================
+
+    match /projects/{projectId} {
+
+      // Read: Members and owner can read
+      allow read: if isAuthenticated() && (
+        resource.data.created_by == request.auth.uid
+        ||
+        request.auth.uid in resource.data.members
+      );
+
+      // Create: Any authenticated user
+      allow create: if isAuthenticated()
+        && request.resource.data.created_by == request.auth.uid;
+
+      // Update: Only owner
+      allow update: if isOwner(resource.data.created_by);
+
+      // Delete: Only owner
+      allow delete: if isOwner(resource.data.created_by);
+    }
+
+    // =========================================================================
+    // SERVICE ACCOUNT ACCESS (for backend API)
+    // =========================================================================
+
+    // If using Firebase Admin SDK from backend, it bypasses these rules.
+    // These rules are for client-side access.
+
+    // For API access without user auth, you can use custom claims:
+    // Example: request.auth.token.isServiceAccount == true
+
+  }
+}

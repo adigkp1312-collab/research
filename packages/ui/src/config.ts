@@ -7,16 +7,13 @@
  */
 
 export const CONFIG = {
-    // Backend API URL
-    API_URL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
-    
-    // Gemini API Key (optional - for direct frontend calls)
-    GEMINI_API_KEY: import.meta.env.VITE_GEMINI_API_KEY || '',
+    // Backend API URL (Cloud Run / Local development)
+    API_URL: import.meta.env.VITE_API_URL || 'http://localhost:8001',
     
     // Model Configuration
     MODELS: {
         GEMINI: {
-            CHAT: 'gemini-2.0-flash-exp',
+            CHAT: 'gemini-2.5-flash',
         },
     },
 } as const;

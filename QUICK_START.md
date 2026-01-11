@@ -23,19 +23,18 @@ cd packages/ui && npm install && cd ../..
 
 ---
 
-## Step 2: Configure API Key
+## Step 2: Configure Google Cloud Project
 
 ```bash
-# Copy example
-cp env.json.example env.json
+# Set up Application Default Credentials
+gcloud auth application-default login
 
-# Edit env.json and add your GEMINI_API_KEY
-# File format:
-{
-  "LangChainAPI": {
-    "GEMINI_API_KEY": "your_actual_key_here"
-  }
-}
+# Or set environment variables
+export GOOGLE_CLOUD_PROJECT=your-project-id
+export VERTEX_AI_LOCATION=us-central1
+
+# Ensure Vertex AI API is enabled
+gcloud services enable aiplatform.googleapis.com
 ```
 
 ---
@@ -43,11 +42,12 @@ cp env.json.example env.json
 ## Step 3: Test Backend
 
 ```bash
-# Build SAM application
-sam build
+# Set environment variables (if not already set)
+export GOOGLE_CLOUD_PROJECT=your-project-id
+export VERTEX_AI_LOCATION=us-central1
 
-# Start local API (Lambda simulation)
-sam local start-api --env-vars env.json --port 8000
+# Run directly with uvicorn
+python apps/server/main.py
 ```
 
 **Test endpoints:**
@@ -75,19 +75,17 @@ Open: http://localhost:5173
 
 ---
 
-## Alternative: Direct uvicorn (without SAM)
+## Alternative: Docker Compose
 
-If SAM isn't installed yet:
+For local development with Docker:
 
 ```bash
-# Set PYTHONPATH
-export PYTHONPATH=/Users/guptaaditya/Applications/langchain-poc
+# Set environment variables
+export GOOGLE_CLOUD_PROJECT=your-project-id
+export VERTEX_AI_LOCATION=us-central1
 
-# Set API key
-export GEMINI_API_KEY=your_key_here
-
-# Run directly
-python3 apps/server/main.py
+# Start services
+docker-compose up
 ```
 
 ---
@@ -102,9 +100,11 @@ python3 apps/server/main.py
 - Check directory names use underscores (not hyphens)
 - Run: `ls packages/` - should show `langchain_chains/` not `langchain-chains/`
 
-**API key errors?**
-- Verify env.json format matches example
-- Check env.json has `LangChainAPI` key (not `Parameters`)
+**Vertex AI errors?**
+- Verify GOOGLE_CLOUD_PROJECT is set correctly
+- Ensure Vertex AI API is enabled in your GCP project
+- Check Application Default Credentials are configured
+- Verify service account has Vertex AI permissions
 
 ---
 

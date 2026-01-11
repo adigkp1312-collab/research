@@ -8,8 +8,15 @@ Team: Platform
 """
 
 from .config import (
-    GEMINI_API_KEY,
-    GEMINI_BASE_URL,
+    GOOGLE_CLOUD_PROJECT,
+    VERTEX_AI_LOCATION,
+    VERTEX_AI_DATASTORE_ID,
+    VERTEX_AI_DATASTORE_NAME,
+    VERTEX_AI_DATASTORE_DESCRIPTION,
+    GCS_BUCKET_NAME,
+    RAG_TOP_K,
+    RAG_CHUNK_SIZE,
+    RAG_CHUNK_OVERLAP,
     LANGCHAIN_TRACING_V2,
     LANGCHAIN_API_KEY,
     LANGCHAIN_PROJECT,
@@ -17,11 +24,19 @@ from .config import (
     DEBUG,
     CORS_ORIGINS,
     validate_config,
+    get_config_summary,
 )
 
 __all__ = [
-    "GEMINI_API_KEY",
-    "GEMINI_BASE_URL",
+    "GOOGLE_CLOUD_PROJECT",
+    "VERTEX_AI_LOCATION",
+    "VERTEX_AI_DATASTORE_ID",
+    "VERTEX_AI_DATASTORE_NAME",
+    "VERTEX_AI_DATASTORE_DESCRIPTION",
+    "GCS_BUCKET_NAME",
+    "RAG_TOP_K",
+    "RAG_CHUNK_SIZE",
+    "RAG_CHUNK_OVERLAP",
     "LANGCHAIN_TRACING_V2",
     "LANGCHAIN_API_KEY",
     "LANGCHAIN_PROJECT",
@@ -29,4 +44,5 @@ __all__ = [
     "DEBUG",
     "CORS_ORIGINS",
     "validate_config",
+    "get_config_summary",
 ]

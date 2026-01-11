@@ -18,10 +18,15 @@ if str(root) not in sys.path:
 from packages.api.src import app
 
 if __name__ == "__main__":
+    import os
     import uvicorn
+    
+    # Cloud Run provides PORT environment variable
+    port = int(os.environ.get("PORT", 8000))
+    
     uvicorn.run(
         "packages.api.src.app:app",
         host="0.0.0.0",
-        port=8000,
+        port=port,
         reload=False,  # Disable in production
     )

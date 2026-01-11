@@ -38,17 +38,13 @@ export const useChat = (initialSessionId?: string) => {
     }]);
 
     try {
-      await chatApi.streamChat(
-        userMessage.content,
-        sessionId,
-        (chunk) => {
-          setMessages(prev => prev.map(msg => 
-            msg.id === assistantId 
-              ? { ...msg, content: msg.content + chunk }
-              : msg
-          ));
-        }
-      );
+      // Use non-streaming endpoint (streaming not fully supported in Lambda yet)
+      const response = await chatApi.chat(userMessage.content, sessionId);
+      setMessages(prev => prev.map(msg => 
+        msg.id === assistantId 
+          ? { ...msg, content: response }
+          : msg
+      ));
     } catch (error) {
       console.error('Chat error:', error);
       setMessages(prev => prev.map(msg => 

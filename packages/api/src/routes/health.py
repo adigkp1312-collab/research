@@ -10,7 +10,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 
 # PYTHONPATH is set by handler.py or main.py entry point
-from packages.core.src import APP_NAME, GEMINI_API_KEY, LANGCHAIN_TRACING_V2, LANGCHAIN_API_KEY
+from packages.core.src import APP_NAME, GOOGLE_CLOUD_PROJECT, LANGCHAIN_TRACING_V2, LANGCHAIN_API_KEY
 from packages.langchain_memory.src import get_active_session_count
 from packages.langchain_client.src import GEMINI_MODEL
 
@@ -33,7 +33,7 @@ async def root():
     return HealthResponse(
         status="ok",
         app_name=APP_NAME,
-        gemini_configured=bool(GEMINI_API_KEY),
+        gemini_configured=bool(GOOGLE_CLOUD_PROJECT),
         langsmith_enabled=LANGCHAIN_TRACING_V2 and bool(LANGCHAIN_API_KEY),
         active_sessions=get_active_session_count(),
         model=GEMINI_MODEL,

@@ -1,76 +1,93 @@
 """
-LangChain Client - Gemini Model Factory
+Vertex AI Client - Gemini Model Factory
 
-Creates LangChain ChatModel instances for Gemini 3 Flash.
+Creates Vertex AI GenerativeModel instances for Gemini.
 
 Team: AI/ML
 """
 
 from __future__ import annotations
-import os
-from typing import Optional, List, Any
+from typing import Optional, Dict, Any
 
-from langchain_google_genai import ChatGoogleGenerativeAI
+import vertexai
+from vertexai.generative_models import GenerativeModel
 
 # Import from core package
 # PYTHONPATH is set by handler.py or main.py entry point
 from packages.core.src import (
-    GEMINI_API_KEY,
-    LANGCHAIN_TRACING_V2,
-    LANGCHAIN_API_KEY,
-    LANGCHAIN_PROJECT,
+    GOOGLE_CLOUD_PROJECT,
+    VERTEX_AI_LOCATION,
 )
 
 # Model Configuration
-GEMINI_MODEL = "gemini-2.0-flash-exp"
-MODEL_NAME = "Gemini 3 Flash (Experimental)"
+GEMINI_MODEL = "gemini-2.5-flash"  # Gemini 2.5 Flash - latest stable
+MODEL_NAME = "Gemini 2.5 Flash"
+
+
+def init_vertex_ai():
+    """Initialize Vertex AI with project and location."""
+    if GOOGLE_CLOUD_PROJECT:
+        vertexai.init(project=GOOGLE_CLOUD_PROJECT, location=VERTEX_AI_LOCATION)
+    else:
+        raise ValueError(
+            "GOOGLE_CLOUD_PROJECT not found in environment variables. "
+            "Set it in Cloud Run environment variables or GCP project settings."
+        )
 
 
 def create_chat_model(
     temperature: float = 0.7,
     streaming: bool = True,
     max_tokens: Optional[int] = None,
-    callbacks: Optional[List[Any]] = None,
-) -> ChatGoogleGenerativeAI:
+    tools: Optional[list] = None,
+) -> GenerativeModel:
     """
-    Creates a LangChain ChatModel for Gemini 3 Flash.
+    Creates a Vertex AI GenerativeModel for Gemini.
     
     Args:
         temperature: Sampling temperature (0-2)
-        streaming: Whether to stream responses
+        streaming: Whether to stream responses (used by caller, not model config)
         max_tokens: Maximum tokens in response
-        callbacks: LangChain callbacks for streaming/tracing
+        tools: Optional list of tools (e.g., Google Search grounding)
     
     Returns:
-        A configured ChatGoogleGenerativeAI instance
+        A configured GenerativeModel instance
     
     Raises:
-        ValueError: If GEMINI_API_KEY is not set
+        ValueError: If GOOGLE_CLOUD_PROJECT is not set
     
     Example:
         >>> model = create_chat_model()
-        >>> response = await model.ainvoke("Hello!")
+        >>> response = model.generate_content("Hello!")
     """
-    if not GEMINI_API_KEY:
+    if not GOOGLE_CLOUD_PROJECT:
         raise ValueError(
-            "GEMINI_API_KEY not found in environment variables. "
-            "Set it in Lambda configuration or local .env file."
+            "GOOGLE_CLOUD_PROJECT not found in environment variables. "
+            "Set it in Cloud Run environment variables or GCP project settings."
         )
     
-    # Configure LangSmith tracing (optional)
-    if LANGCHAIN_TRACING_V2 and LANGCHAIN_API_KEY:
-        os.environ["LANGCHAIN_TRACING_V2"] = "true"
-        os.environ["LANGCHAIN_API_KEY"] = LANGCHAIN_API_KEY
-        os.environ["LANGCHAIN_PROJECT"] = LANGCHAIN_PROJECT
+    # Initialize Vertex AI (only once, but safe to call multiple times)
+    init_vertex_ai()
     
-    return ChatGoogleGenerativeAI(
-        model=GEMINI_MODEL,
+    # Build generation config dict
+    from vertexai.generative_models import GenerationConfig
+    generation_config = GenerationConfig(
         temperature=temperature,
-        streaming=streaming,
-        max_tokens=max_tokens,
-        callbacks=callbacks,
-        google_api_key=GEMINI_API_KEY,
-    )
+        max_output_tokens=max_tokens,
+    ) if max_tokens else GenerationConfig(temperature=temperature)
+    
+    # Create model with optional tools
+    if tools:
+        return GenerativeModel(
+            GEMINI_MODEL,
+            generation_config=generation_config,
+            tools=tools
+        )
+    else:
+        return GenerativeModel(
+            GEMINI_MODEL,
+            generation_config=generation_config
+        )
 
 
 def get_model_info() -> dict:
@@ -79,5 +96,6 @@ def get_model_info() -> dict:
         "model": GEMINI_MODEL,
         "model_name": MODEL_NAME,
         "provider": "Google",
-        "api_type": "Direct (via GEMINI_API_KEY)",
+        "api_type": "Vertex AI (via GOOGLE_CLOUD_PROJECT)",
+        "location": VERTEX_AI_LOCATION,
     }
