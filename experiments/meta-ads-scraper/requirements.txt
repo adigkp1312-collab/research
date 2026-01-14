@@ -1,0 +1,9 @@
+playwright>=1.40.0
+google-cloud-storage>=2.14.0
+python-dotenv>=1.0.0
+rich>=13.7.0
+click>=8.1.7
+requests>=2.31.0
+streamlit>=1.30.0
+pandas>=2.0.0
+supabase>=2.3.0

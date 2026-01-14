@@ -1,0 +1,19 @@
+# Exclude local state and build artifacts
+data/
+temp/
+debug/
+.env
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.db
+.sqlite
+.git
+.gitignore
+Dockerfile
+deploy_cloud_run.sh
+README.md
+requirements_dev.txt
+tests/

@@ -1,0 +1,26 @@
+# Ignore patterns
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.env
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Data files
+data/
+temp/
+exports/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+service-account.json

@@ -1,26 +1,37 @@
-# Adiyogi LangChain
+# Adiyogi Research
 
 Modular LangChain + Gemini 3 Flash integration for Adiyogi Arts.
 
 ## Structure
 
 ```
-Adiyogilanchain/
-├── packages/               # Independent modules
-│   ├── core/               # [Platform] Config, types, utils
-│   ├── langchain-client/   # [AI/ML] Gemini model factory
-│   ├── langchain-memory/   # [AI/ML] Session memory
-│   ├── langchain-chains/   # [AI/ML] Conversation chains
-│   ├── research_agent/     # [AI/ML] Internet research with Vertex AI
-│   ├── api/                # [Backend] FastAPI endpoints
-│   ├── ui/                 # [Frontend] React components
-│   └── testing/            # [QA] E2E & integration tests
+research/
+├── packages/               # Python libraries
+│   ├── core/               # Config, types, utils
+│   ├── knowledge_base/     # Knowledge base logic
+│   ├── research_agent/     # AI research agent (Vertex AI + Grounding)
+│   ├── langchain-client/   # Gemini model factory
+│   ├── langchain-memory/   # Session memory
+│   ├── langchain-chains/   # Conversation chains
+│   ├── api/                # FastAPI endpoints
+│   ├── ui/                 # React components
+│   └── testing/            # E2E & integration tests
+│
 ├── apps/                   # Deployable applications
 │   ├── server/             # Backend entry point (Lambda)
 │   ├── web/                # Frontend entry point
-│   └── research-service/   # Research API (Cloud Run)
+│   ├── research-service/   # Research API (Cloud Run)
+│   └── research-hub-service/ # Research Hub API
+│
+├── experiments/            # Research experiments & POCs
+│   └── meta-ads-scraper/   # Meta Ad Library scraper (Playwright + GCS)
+│
+├── notebooks/              # Jupyter notebooks for exploration
+├── datasets/               # Sample data & GCS references
+├── tools/                  # Standalone CLI utilities
 ├── docs/                   # Documentation
-└── scripts/                # Development scripts
+├── scripts/                # Development scripts
+└── firebase/               # Firebase configs
 ```
 
 ## Quick Start
@@ -35,8 +46,8 @@ Adiyogilanchain/
 
 ```bash
 # Clone
-git clone https://github.com/adigkp1312-collab/Adiyogilanchain.git
-cd Adiyogilanchain
+git clone https://github.com/adigkp1312-collab/research.git
+cd research
 
 # Install backend deps
 pip install -r apps/server/requirements.txt
