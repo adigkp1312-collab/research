@@ -46,13 +46,18 @@ class AdLibraryScraper:
             '--single-process',
         ]
 
+        # User agent to avoid bot detection
+        user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        
         self.browser = self._playwright.chromium.launch(
             headless=self.headless,
             args=browser_args
         )
-        self.page = self.browser.new_page()
-        # Set viewport for consistent rendering
-        self.page.set_viewport_size({"width": 1920, "height": 1080})
+        self.context = self.browser.new_context(
+            user_agent=user_agent,
+            viewport={"width": 1920, "height": 1080}
+        )
+        self.page = self.context.new_page()
     
     def stop(self):
         """Stop browser."""
@@ -88,7 +93,8 @@ class AdLibraryScraper:
         )
         
         console.print(f"[dim]Navigating to Ad Library...[/dim]")
-        self.page.goto(search_url, wait_until="networkidle", timeout=60000)
+        # Use load instead of networkidle which can hang indefinitely
+        self.page.goto(search_url, wait_until="load", timeout=90000)
         
         # Wait for page to render
         time.sleep(5)
@@ -146,7 +152,8 @@ class AdLibraryScraper:
                 
                 # Scroll to load more
                 self._scroll_page()
-                time.sleep(DOWNLOAD_DELAY + random.uniform(0.5, 1.5))
+                # Added randomized delay to look more human
+                time.sleep(DOWNLOAD_DELAY + random.uniform(2.0, 5.0))
         
         console.print(f"[green]✓ Collected {len(ads)} video ads[/green]")
         return ads[:limit] if limit else ads

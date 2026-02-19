@@ -8,13 +8,19 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Paths
-BASE_DIR = Path(__file__).parent.parent
-DATA_DIR = BASE_DIR / "data"
-TEMP_DIR = BASE_DIR / "temp"
+is_cloud = os.getenv("K_SERVICE") is not None
+if is_cloud:
+    # Use /tmp in Cloud Run as it's the only writable directory
+    DATA_DIR = Path("/tmp/meta_ads_data")
+    TEMP_DIR = Path("/tmp/meta_ads_temp")
+else:
+    BASE_DIR = Path(__file__).parent.parent
+    DATA_DIR = BASE_DIR / "data"
+    TEMP_DIR = BASE_DIR / "temp"
 
 # Ensure directories exist
-DATA_DIR.mkdir(exist_ok=True)
-TEMP_DIR.mkdir(exist_ok=True)
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
 # GCS Configuration
 GCS_BUCKET = os.getenv("GCS_BUCKET", "metaadsscrapper")
