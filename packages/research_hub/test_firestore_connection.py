@@ -10,10 +10,10 @@ try:
     )
     
     # Create client
-    db = firestore.Client(credentials=creds, project='artful-striker-483214-b0')
+    db = firestore.Client(credentials=creds, project='project-9881b278-0a45-47c1-9ed')
     
     print("✓ Successfully connected to Firestore")
-    print(f"  Project: artful-striker-483214-b0")
+    print(f"  Project: project-9881b278-0a45-47c1-9ed")
     
     # Check the collection
     collection_name = 'research_hub_entries'

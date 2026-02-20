@@ -24,7 +24,7 @@ TEMP_DIR.mkdir(parents=True, exist_ok=True)
 
 # GCS Configuration
 GCS_BUCKET = os.getenv("GCS_BUCKET", "metaadsscrapper")
-GCS_PROJECT = os.getenv("GCS_PROJECT", "artful-striker-483214-b0")
+GCS_PROJECT = os.getenv("GCS_PROJECT", "project-9881b278-0a45-47c1-9ed")
 GCS_PREFIX = "meta-ads"
 
 # Supabase Configuration (for auth)

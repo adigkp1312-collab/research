@@ -3,7 +3,7 @@
 # Configuration
 SERVICE_NAME="meta-ads-ui"
 REGION="europe-west1"
-PROJECT_ID="artful-striker-483214-b0" # Extracted from src/config.py
+PROJECT_ID="project-9881b278-0a45-47c1-9ed" # Extracted from src/config.py
 IMAGE_NAME="gcr.io/$PROJECT_ID/$SERVICE_NAME"
 
 echo "🚀 Starting deployment for $SERVICE_NAME..."

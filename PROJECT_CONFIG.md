@@ -1,6 +1,6 @@
 # Project Configuration
 
-## Active Project: artful-striker-483214-b0
+## Active Project: project-9881b278-0a45-47c1-9ed
 
 This project is now configured as the default for all operations.
 
@@ -8,7 +8,7 @@ This project is now configured as the default for all operations.
 
 ```bash
 # Set environment variables
-export GOOGLE_CLOUD_PROJECT=artful-striker-483214-b0
+export GOOGLE_CLOUD_PROJECT=project-9881b278-0a45-47c1-9ed
 export VERTEX_AI_LOCATION=us-central1
 
 # Or use the setup script
@@ -27,7 +27,7 @@ Based on testing, this project has access to:
 
 - **Model:** `gemini-2.5-flash` (configured, but may not be available)
 - **Location:** `us-central1`
-- **Project ID:** `artful-striker-483214-b0`
+- **Project ID:** `project-9881b278-0a45-47c1-9ed`
 
 ## Update Model if Needed
 
@@ -41,7 +41,7 @@ GEMINI_MODEL = "gemini-2.0-flash"  # Use available model
 ## Test the Setup
 
 ```bash
-export GOOGLE_CLOUD_PROJECT=artful-striker-483214-b0
+export GOOGLE_CLOUD_PROJECT=project-9881b278-0a45-47c1-9ed
 export VERTEX_AI_LOCATION=us-central1
 python3 test_local_setup.py
 ```
@@ -50,7 +50,7 @@ python3 test_local_setup.py
 
 Start server with:
 ```bash
-export GOOGLE_CLOUD_PROJECT=artful-striker-483214-b0
+export GOOGLE_CLOUD_PROJECT=project-9881b278-0a45-47c1-9ed
 export VERTEX_AI_LOCATION=us-central1
 python3 apps/server/main.py
 ```

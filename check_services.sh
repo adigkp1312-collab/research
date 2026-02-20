@@ -1,7 +1,7 @@
 #!/bin/bash
 # Check enabled GCP services
 
-PROJECT_ID=gen-lang-client-0097254519
+PROJECT_ID=project-9881b278-0a45-47c1-9ed
 
 echo "=" * 70
 echo "Enabled Google Cloud Services for Project: $PROJECT_ID"

@@ -298,7 +298,7 @@ packages/research_hub/
 ```bash
 # Google Cloud
 GOOGLE_APPLICATION_CREDENTIALS=/path/to/credentials.json
-GOOGLE_CLOUD_PROJECT=artful-striker-483214-b0
+GOOGLE_CLOUD_PROJECT=project-9881b278-0a45-47c1-9ed
 
 # Storage
 GCS_BUCKET_NAME=research-hub-videos

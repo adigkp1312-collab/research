@@ -1,7 +1,7 @@
 #!/bin/bash
 # Quick setup script for local testing
 
-export GOOGLE_CLOUD_PROJECT=artful-striker-483214-b0
+export GOOGLE_CLOUD_PROJECT=project-9881b278-0a45-47c1-9ed
 export VERTEX_AI_LOCATION=us-central1
 
 echo "✅ Environment variables set:"

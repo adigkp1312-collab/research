@@ -1,7 +1,7 @@
 #!/bin/bash
 # Test script with your project ID
 
-export GOOGLE_CLOUD_PROJECT=artful-striker-483214-b0
+export GOOGLE_CLOUD_PROJECT=project-9881b278-0a45-47c1-9ed
 export VERTEX_AI_LOCATION=us-central1
 
 echo "🚀 Testing with project: $GOOGLE_CLOUD_PROJECT"

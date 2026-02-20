@@ -1,6 +1,6 @@
 # Enabled Google Cloud Services
 
-## Project: gen-lang-client-0097254519
+## Project: project-9881b278-0a45-47c1-9ed
 
 Based on what's working, here are the services that are **confirmed enabled**:
 
@@ -22,31 +22,31 @@ These services are **required** for Cloud Run deployment but may not be enabled 
 3. **Cloud Run API** (`run.googleapis.com`)
    - Status: ❓ UNKNOWN (needed for deployment)
    - Used for: Deploying containerized applications
-   - Enable: `gcloud services enable run.googleapis.com --project=gen-lang-client-0097254519`
+   - Enable: `gcloud services enable run.googleapis.com --project=project-9881b278-0a45-47c1-9ed`
 
 4. **Cloud Build API** (`cloudbuild.googleapis.com`)
    - Status: ❓ UNKNOWN (needed for building containers)
    - Used for: Building Docker images
-   - Enable: `gcloud services enable cloudbuild.googleapis.com --project=gen-lang-client-0097254519`
+   - Enable: `gcloud services enable cloudbuild.googleapis.com --project=project-9881b278-0a45-47c1-9ed`
 
 5. **Artifact Registry API** (`artifactregistry.googleapis.com`)
    - Status: ❓ UNKNOWN (optional, for storing images)
    - Used for: Storing Docker images
-   - Enable: `gcloud services enable artifactregistry.googleapis.com --project=gen-lang-client-0097254519`
+   - Enable: `gcloud services enable artifactregistry.googleapis.com --project=project-9881b278-0a45-47c1-9ed`
 
 6. **Container Registry API** (`containerregistry.googleapis.com`)
    - Status: ❓ UNKNOWN (alternative to Artifact Registry)
    - Used for: Storing Docker images (legacy)
-   - Enable: `gcloud services enable containerregistry.googleapis.com --project=gen-lang-client-0097254519`
+   - Enable: `gcloud services enable containerregistry.googleapis.com --project=project-9881b278-0a45-47c1-9ed`
 
 ## Check Services (if you have permissions)
 
 ```bash
 # List all enabled services
-gcloud services list --enabled --project=gen-lang-client-0097254519
+gcloud services list --enabled --project=project-9881b278-0a45-47c1-9ed
 
 # Check specific service
-gcloud services list --enabled --project=gen-lang-client-0097254519 \
+gcloud services list --enabled --project=project-9881b278-0a45-47c1-9ed \
   --filter="name:aiplatform.googleapis.com"
 ```
 
@@ -56,13 +56,13 @@ If you have permissions, enable services needed for Cloud Run:
 
 ```bash
 # Enable Cloud Run
-gcloud services enable run.googleapis.com --project=gen-lang-client-0097254519
+gcloud services enable run.googleapis.com --project=project-9881b278-0a45-47c1-9ed
 
 # Enable Cloud Build
-gcloud services enable cloudbuild.googleapis.com --project=gen-lang-client-0097254519
+gcloud services enable cloudbuild.googleapis.com --project=project-9881b278-0a45-47c1-9ed
 
 # Enable Artifact Registry (optional but recommended)
-gcloud services enable artifactregistry.googleapis.com --project=gen-lang-client-0097254519
+gcloud services enable artifactregistry.googleapis.com --project=project-9881b278-0a45-47c1-9ed
 ```
 
 ## Current Status Summary

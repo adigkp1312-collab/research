@@ -1,7 +1,7 @@
 #!/bin/bash
 # Quick local test script
 
-export GOOGLE_CLOUD_PROJECT=gen-lang-client-0097254519
+export GOOGLE_CLOUD_PROJECT=project-9881b278-0a45-47c1-9ed
 export VERTEX_AI_LOCATION=us-central1
 
 echo "🚀 Starting Local Test with Gemini 2.5 Flash"
